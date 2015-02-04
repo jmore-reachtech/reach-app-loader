@@ -1,0 +1,43 @@
+# This is the translate file translate.txt
+# This is used to translate messages from the GUI (QML) to the serial port and vice versa. 
+# Ideally, the GUI messages are human readable so that the GUI code makes sense to UI designers.
+# The messages to the outside world via the serial port can be machine readable, for example by an attached microcontroller.
+#
+# Format for QML -> serial translation:
+# G:string_from_GUI=%s,T:translated_string_to_serial%s 
+
+# Format for serial -> QML translation:
+# M:string_from_serial=%s,T:translated_string_to_QML=%s 
+#
+#--------------------------------------
+# Example of GUI -> serial port message 
+#
+# translate file contains:
+# 	G:motorSpeed=%s,T:s1=%s
+#
+# QML statement executed: (assume slider1.value == 99)
+#	connection.send("motorSpeed="+slider1.value)
+#
+# serial port output:
+#	s1=99<return>
+#
+#--------------------------------------
+# Example of serial port message -> GUI
+#
+# translate file contains:
+# 	M:t1=%s,T:motorTemperature.text=%s
+#
+# Serial port receives this string:
+#	t1=45<return>
+#
+# QML effect:
+# Text {
+# 	objectName: "motorTemperature"
+#        x: 0
+
+# ==============================================
+# default translation file entries
+# these are used if there is no other match
+M:upgrade=%s,T:upgrade.run=%s
+G:%s,T:%s
+
