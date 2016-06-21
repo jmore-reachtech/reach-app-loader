@@ -89,10 +89,9 @@ Rectangle{
         }
 
         onErrorMsgChanged:{
-            text1.text = plugin.errorMsg();
+            txtMessage.text = plugin.errorMsg();
             btnRestart.visible = false;
             progress.visible = false;
-			text1.y = 60;
         }
     }
 
