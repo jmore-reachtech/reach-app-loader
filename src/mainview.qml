@@ -21,6 +21,16 @@ Rectangle{
         font.family: "DejaVu Sans"
     }
 
+    Text{
+        id: txtInstructions
+        width: parent.width
+        text: "Place your qml application in folder /application/src\nin the first partition of the USB drive."
+        font.family: "DejaVu Sans"
+        horizontalAlignment: Text.AlignHCenter
+        font.pixelSize: 18
+        anchors.top: txtTitle.bottom
+        anchors.topMargin: 3
+    }
 
     Text {
         id: txtMessage
@@ -28,9 +38,9 @@ Rectangle{
         text: ""
         font.family: "DejaVu Sans"
         horizontalAlignment: Text.AlignHCenter
-        font.pixelSize: 20
+        font.pixelSize: 18
         anchors.top: txtTitle.bottom
-        anchors.topMargin: parent.height * 0.1
+        anchors.topMargin: parent.height * 0.14
     }
 
 
