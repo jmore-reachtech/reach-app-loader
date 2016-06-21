@@ -1,77 +1,69 @@
-import QtQuick 1.1
+import QtQuick 2.0
 import "components"
+import com.reachtech.systemplugin 1.0
 
 Rectangle{
     id: root
     objectName: "root"
-    width: 480
-    height: 272
+    width: screen.getScreenWidth()
+    height: screen.getScreenHeight()
     property int totalFiles: 0
-    signal message(string msg)
-    color: "#ff0000"
-	
-    Item{
-        id: upgrade
-        objectName: "upgrade"
-        property string run: ""
+    color: "#AAAAAA"
 
-        onRunChanged: {
-            if  (run == "true")
-            {
-                text1.font.pixelSize = 16
-                text1.text = "Upgrading qml application...please wait."
-                totalFiles = plugin.getTotalFileCount();
-                btnUpgrade.visible = false;
-                password.visible = false;
-                radio.visible = false;
-                progress.visible = true;
-                plugin.upgrade();
-            }
-        }
+    Text{
+        id: txtTitle
+        text: "Application Upgrade"
+        horizontalAlignment: Text.AlignHCenter
+        font.pixelSize: parent.height > 480 ? 32 : 28
+        width: parent.width
+        anchors.top: parent.top
+        anchors.topMargin: parent.height * 0.1
+        font.family: "DejaVu Sans"
     }
+
+
+    Text {
+        id: txtMessage
+        width: parent.width
+        text: ""
+        font.family: "DejaVu Sans"
+        horizontalAlignment: Text.AlignHCenter
+        font.pixelSize: 20
+        anchors.top: txtTitle.bottom
+        anchors.topMargin: parent.height * 0.1
+    }
+
 
     VerticalRadioButtonList {
         id: radio
-        x: 125
-        y: 73
-        width: 267
-        height: 86
-        font.strikeout: false
-        font.underline: false
-        font.italic: false
+        anchors.top: txtMessage.bottom
+        anchors.topMargin: parent.height * 0.1
+		anchors.horizontalCenter: parent.horizontalCenter
         spacing: 4
-        font.pixelSize: 17
+        font.pixelSize: 18
         textColor: "#000000"
-        imageHeight: 36
-        itemSpacing: 25
-        imageWidth: 36
+        imageHeight: 28
+        itemSpacing: 7
+        imageWidth: 28
         font.family: "DejaVu Sans"
         font.bold: false
         model: ListModel {
-            ListElement {
-                item_value: "/media/mmcblk0p2/application"
-                item_checked: true
-                item_text: "Load from micro SD card"
-            }
-
-            ListElement {
-                item_value: "/media/sda1/application"
-                item_checked: false
-                item_text: "Load from USB flash drive"
-            }
         }
         imageUnChecked: "images/radiobutton.png"
         imageChecked: "images/radiobutton_click.png"
 
         onValueChanged: {
             plugin.upgradeSourcePath = value;
+            text1.text = "Note: If you decide to upgrade,\nall files in the " + plugin.applicationSourcePath + " folder will be deleted.\n"
+                  + "The upgrade path is " + plugin.upgradeSourcePath;
+
         }
     }
 
     Upgrade{
         id: plugin
-        applicationSourcePath: "/application"
-        upgradeSourcePath: "/media/sda1/application"
+        applicationSourcePath: "/application/src"
+        upgradeSourcePath: "/media/sda/application/src"
 
         onProgressChanged:{
             progress.value = (plugin.progress()/totalFiles)*100;
@@ -79,8 +71,7 @@ Rectangle{
             {
                 progress.visible = false;
                 btnRestart.visible = true;
-                text1.font.pixelSize = 18
-				text1.text = "Load was successful.\nClick \"Restart\" to reboot the module.";
+                text1.text = "The upgrade was successful.\nClick the \"Restart\" button to reboot your module.";
             }
 
             if (progress.value == 50)
@@ -97,10 +88,11 @@ Rectangle{
 
     HorizontalLevelIndicator {
         id: progress
-        x: 40
-        y: 120
-        width: 400
-        height: 20
+        anchors.top: radio.bottom
+        anchors.topMargin: 40
+        width: parent.width/2
+        height: parent.height > 480 ? 40 : 26
+        anchors.horizontalCenter: parent.horizontalCenter
         imageBase: "images/tank.png"
         imageOverlay: "images/tank_overlay.png"
         increment: 4
@@ -110,94 +102,98 @@ Rectangle{
         symbol: "%"
         hintFontBold: true
         hintFontColor: "#ffffff"
-        hintFontPixelSize: 14
+        hintFontPixelSize: 16
         hintFontFamily: "DejaVu Sans"
         visible: false
     }
 
-
     ImageButton {
         id: btnRestart
-        x: 195
-        y: 131
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: progress.bottom
+        anchors.topMargin: parent.height > 480 ? 100 : 40
         width: 90
-        height: 56
+        height: parent.height > 480 ? 56 : 42
         text: "Restart"
         imageUp: "images/internal_button_up.bmp"
         imageDown: "images/internal_button_dn.bmp"
-        font.bold: true
+        font.bold: false
         font.family: "DejaVu Sans"
-        font.pixelSize: 14
+        font.pixelSize: 16
         visible: false
 
         onButtonClick: {
             btnRestart.visible = false;
-            text1.text = "Please wait...rebooting the module."
-            plugin.execute("/etc/init.d/reboot", [""]);
+            txtMessage.text = "Please wait...rebooting the module."
+            system.execute("/etc/init.d/reboot");
 
         }
     }
-
-    Text {
-        id: text1
-        x: 18
-        y: 19
-        width: 444
-        height: 48
-        text: qsTr("Initial Application Load")
-        horizontalAlignment: Text.AlignHCenter
-        font.family: "DejaVu Sans"
-        font.pixelSize: 24
-    }
-
-
 
     ImageButton {
         id: btnUpgrade
-        x: 163
-        y: 191
-        width: 154
-        height: 53
-        text: "Go"
+        width: 90
+        height: parent.height > 480 ? 56 : 42
+        text: "Upgrade"
+        anchors.top: btnRestart.bottom
+        anchors.topMargin: parent.height > 480 ? 20 : 40
         imageUp: "images/internal_button_up.bmp"
-        textColor: "#000000"
-        font.pixelSize: 30
         imageDown: "images/internal_button_dn.bmp"
-        font.family: "DejaVu Sans"
         font.bold: false
+        font.family: "DejaVu Sans"
+        font.pixelSize: 16
+        visible: false
+        anchors.horizontalCenter: parent.horizontalCenter
 
         onButtonClick: {
-            text1.font.pixelSize = 18
-			text1.text = "Upgrading qml application...please wait."
-            totalFiles = plugin.getTotalFileCount();
-            btnUpgrade.visible = false;
-            radio.visible = false;
-            progress.visible = true;
-            plugin.upgrade();
+		    if (radio.value.length > 0)
+			{
+                totalFiles = plugin.getTotalFileCount();
+                btnUpgrade.visible = false;
+                radio.visible = false;
+                progress.visible = true;
+                plugin.upgrade();
+			}
+			else
+                txtMessage.text = "Please choose a radio button selection.";
         }
     }
-
-
 
     System{
         id: system
     }
 
-    Component.onCompleted: {
-        //Check if we are running from NAND
-        var data = system.execute("df");
+    Timer{
+        id: timer
+        interval: 100; running: true; repeat: true
+        onTriggered: checkForUSBDevices();
+    }
 
-        if (data.indexOf("ubi0:rootfs0") < 0)
-        {
-            //show an error
-            text1.font.pixelSize = 18
-			text1.text = "Error:  You must boot from NAND to upgrade."
+
+    function checkForUSBDevices()
+    {
+        var usb = system.execute("sh /application/src/usb.sh");
+        var values = usb.split("\n");
+        
+        if (values.length > 0 && values[0].length > 0)
+		{
+		    btnUpgrade.visible = true;
+            txtMessage.text = "USB stick found.";
+			timer.stop();
+		}
+        else {
             btnUpgrade.visible = false;
-            password.visible = false;
-            radio.visible = false;
-			text1.y = 60;
+            txtMessage.text = "No USB stick found.  Plug in a USB stick."
         }
+
+        for (var i=1; i < values.length-1; i++)
+        {
+            radio.model.append({item_value: values[i] + "/application/src", item_checked: false, item_text: "Upgrade from USB Stick: " + values[i]});
+        }
+    }
+    Component.onCompleted: {
     }
 
 
 }
+

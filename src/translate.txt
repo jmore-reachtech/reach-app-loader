@@ -1,43 +1,20 @@
-# This is the translate file translate.txt
-# This is used to translate messages from the GUI (QML) to the serial port and vice versa. 
-# Ideally, the GUI messages are human readable so that the GUI code makes sense to UI designers.
-# The messages to the outside world via the serial port can be machine readable, for example by an attached microcontroller.
+# Translate file for I/O Demo
 #
-# Format for QML -> serial translation:
-# G:string_from_GUI=%s,T:translated_string_to_serial%s 
-
-# Format for serial -> QML translation:
-# M:string_from_serial=%s,T:translated_string_to_QML=%s 
+# When button1 is pushed, b=1 is sent to the serial port
+# When button2 is pushed, b=2 is sent to the serial port
+# When
+#   tc=32<line feed>
+# is received on the serial port, the Celsius temperature display is updated to read 32
 #
-#--------------------------------------
-# Example of GUI -> serial port message 
+# When
+#   tf=70<line feed>
+# is received on the serial port, the Fahrenheit temperature display is updated to read 70
 #
-# translate file contains:
-# 	G:motorSpeed=%s,T:s1=%s
+# this line says translate "button_push=<digit>" from the GUI to "b=<number>" to the serial port
+G:button_click=%s,T:b=%s
 #
-# QML statement executed: (assume slider1.value == 99)
-#	connection.send("motorSpeed="+slider1.value)
-#
-# serial port output:
-#	s1=99<return>
-#
-#--------------------------------------
-# Example of serial port message -> GUI
-#
-# translate file contains:
-# 	M:t1=%s,T:motorTemperature.text=%s
-#
-# Serial port receives this string:
-#	t1=45<return>
-#
-# QML effect:
-# Text {
-# 	objectName: "motorTemperature"
-#        x: 0
-
-# ==============================================
-# default translation file entries
-# these are used if there is no other match
-M:upgrade=%s,T:upgrade.run=%s
-G:%s,T:%s
+# this line translates "tc=<number>" from the serial port into the QML objectName setting celsius_input.text=<number>
+M:tc=%s,T:celsius_input.text=%s
+# this line translates "tf=<number>" from the serial port into the QML objectName setting fahrenheit_input.text=<number>
+M:tf=%s,T:fahrenheit_input.text=%s
 
