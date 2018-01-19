@@ -195,7 +195,7 @@ Rectangle{
             txtMessage.text = "No USB stick found.  Plug in a USB stick."
         }
 
-        for (var i=1; i < values.length-1; i++)
+        for (var i=0; i < values.length-1; i++)
         {
             radio.model.append({item_value: values[i] + "/application/src", item_checked: false, item_text: "Upgrade from USB Stick: " + values[i]});
         }
